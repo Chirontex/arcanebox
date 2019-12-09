@@ -19,7 +19,6 @@ class HelloController extends ControllerAbstract
     {
 
         $this->render([
-            'model' => 'Hello',
             'view' => 'sign_in'
         ]);
 
@@ -29,7 +28,6 @@ class HelloController extends ControllerAbstract
     {
 
         $this->render([
-            'model' => 'Hello',
             'view' => 'documentation'
         ]);
 

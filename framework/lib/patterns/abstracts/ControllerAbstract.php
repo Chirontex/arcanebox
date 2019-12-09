@@ -18,7 +18,8 @@ abstract class ControllerAbstract implements ControllerInterface
         $this->layout_actual = $this->chooseLayout();
         $this->language_set = $language;
 
-        $this->$action();
+        if (method_exists($this, $action)) $this->$action();
+        else $this->not_found();
 
     }
 
@@ -31,6 +32,8 @@ abstract class ControllerAbstract implements ControllerInterface
 
     public function render($aspects)
     {
+        
+        if (!(isset($aspects['model']))) $aspects['model'] = $this->layout_actual;
 
         $view_path_original = $this->views[$aspects['model']][$aspects['view']];
 
@@ -62,7 +65,6 @@ abstract class ControllerAbstract implements ControllerInterface
     {
 
         $this->render([
-            'model' => 'Hello',
             'view' => 'index'
         ]);
 
@@ -72,7 +74,6 @@ abstract class ControllerAbstract implements ControllerInterface
     {
 
         $this->render([
-            'model' => 'Hello',
             'view' => 'not_found'
         ]);
 
