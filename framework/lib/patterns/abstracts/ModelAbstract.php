@@ -18,9 +18,9 @@ abstract class ModelAbstract implements ModelInterface
 
         if ($this->table_name != false) {
 
-            $connection = $GLOBALS['autoload']->configs_loaded[Database];
+            $connection = $GLOBALS['autoload']->configs_loaded['Database'];
 
-            $this->mysqli = new \mysqli($connection[host], $connection[username], $connection[password], $connection[database]);
+            $this->mysqli = new \mysqli($connection['host'], $connection['username'], $connection['password'], $connection['database']);
             $this->mysqli->query("SET NAMES 'utf8'");
 
         }

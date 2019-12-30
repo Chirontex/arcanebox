@@ -12,7 +12,7 @@ class Database implements ConfigInterface {
             'host' => 'localhost',
             'username' => 'root',
             'password' => '',
-            'database' => 'halcyon'
+            'database' => 'arcanebox'
         ];
 
         return $dbconnect;

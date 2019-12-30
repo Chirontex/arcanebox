@@ -33,9 +33,9 @@ abstract class ControllerAbstract implements ControllerInterface
     public function render($aspects)
     {
         
-        if (!(isset($aspects['model']))) $aspects['model'] = $this->layout_actual;
+        if (!(isset($aspects['layout']))) $aspects['layout'] = $this->layout_actual;
 
-        $view_path_original = $this->views[$aspects['model']][$aspects['view']];
+        $view_path_original = $this->views[$aspects['layout']][$aspects['view']];
 
         if ($this->language_set === 'default') {
 
