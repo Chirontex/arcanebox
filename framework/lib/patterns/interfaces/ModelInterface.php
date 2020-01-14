@@ -5,9 +5,8 @@ namespace Arcanebox\lib\patterns\interfaces;
 interface ModelInterface
 {
 
-    function __construct();
+    function __construct($tableName);
     function __destruct();
-    function tableName();
     function index();
 
 }
