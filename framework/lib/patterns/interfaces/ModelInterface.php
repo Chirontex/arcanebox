@@ -7,6 +7,5 @@ interface ModelInterface
 
     function __construct($tableName);
     function __destruct();
-    function index();
 
 }

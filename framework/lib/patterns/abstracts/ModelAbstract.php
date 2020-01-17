@@ -38,11 +38,6 @@ abstract class ModelAbstract implements ModelInterface
 
     }
 
-    public function index()
-    {
- 
-    }
-
     public function databaseSelect($params)
     {
 
