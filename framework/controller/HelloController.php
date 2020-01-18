@@ -26,13 +26,13 @@ class HelloController extends ControllerAbstract
 
         $check = $model->checkAuth($_SESSION['login'], $_SESSION['password']);
 
-        $model = null;
-
         if ($check) {
 
             $this->render(['view' => 'cabinet']);
 
         } else $this->render(['view' => 'sign_in']);
+
+        $model = null;
 
     }
 
@@ -60,15 +60,11 @@ class HelloController extends ControllerAbstract
 
         if ($check) {
 
-            $model = null;
-
             $this->render(['view' => 'cabinet']);
 
         } elseif (isset($_SESSION['login']) && isset($_SESSION['password'])) {
 
             $check = $model->checkAuth($_SESSION['login'], $_SESSION['password']);
-
-            $model = null;
 
             if ($check) {
 
@@ -78,11 +74,11 @@ class HelloController extends ControllerAbstract
 
         } else {
 
-            $model = null;
-
             $this->render(['view' => 'sign_in', 'auth' => 'fail']);
 
         }
+
+        $model = null;
 
     }
 
@@ -91,12 +87,13 @@ class HelloController extends ControllerAbstract
 
         $model = new Hello;
         $model->abortAuth();
-        $model = null;
 
         setcookie('logged', false, 0);
         $_COOKIE['logged'] = false;
 
         $this->sign_in();
+
+        $model = null;
 
     }
 
