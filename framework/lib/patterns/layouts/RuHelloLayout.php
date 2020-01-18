@@ -9,7 +9,7 @@
 
 	<?php
 
-		if ($aspects['view'] === 'sign_in') {
+		if ($aspects['view'] === 'sign_in' || $aspects['view'] === 'cabinet') {
 
 			echo '<link rel="stylesheet" type="text/css" href="'.$this->configs['Domain']['framework_folder'].'/lib/patterns/layouts/css/Hello/sign_in.css">';
 
@@ -49,23 +49,40 @@
 
 				}
 
-				if ($aspects[view] === 'sign_in') {
+				if ($_COOKIE['logged']) {
 
-					echo '<li class="nav-item active">
-							<a class="nav-link" href="'.$this->configs['Domain']['domain_name'].'/index.php?r=sign_in">Войти<span class="sr-only">(сейчас)</span></a>
-						</li>';
+					if ($aspects['view'] === 'cabinet') {
+
+						echo '<li class="nav-item active">
+								<a class="nav-link" href="'.$this->configs['Domain']['domain_name'].'/index.php?r=sign_in">Кабинет<span class="sr-only">(сейчас)</span></a>
+							</li>';
+					} else {
+
+						echo '<li class="nav-item">
+								<a class="nav-link" href="'.$this->configs['Domain']['domain_name'].'/index.php?r=sign_in">Кабинет</a>
+							</li>';
+
+					}
+
+				} else {
+
+					if ($aspects['view'] === 'sign_in') {
+
+						echo '<li class="nav-item active">
+								<a class="nav-link" href="'.$this->configs['Domain']['domain_name'].'/index.php?r=sign_in">Войти<span class="sr-only">(сейчас)</span></a>
+							</li>';
+
+					} else {
+
+						echo '<li class="nav-item">
+								<a class="nav-link" href="'.$this->configs['Domain']['domain_name'].'/index.php?r=sign_in">Войти</a>
+							</li>';
+
+					}
 
 				}
 
-				else {
-
-					echo '<li class="nav-item">
-							<a class="nav-link" href="'.$this->configs['Domain']['domain_name'].'/index.php?r=sign_in">Войти</a>
-						</li>';
-
-				}
-
-				if ($aspects[view] === 'documentation') {
+				if ($aspects['view'] === 'documentation') {
 
 					echo '<li class="nav-item active">
 							<a class="nav-link" href="'.$this->configs['Domain']['domain_name'].'/index.php?r=documentation">Документация<span class="sr-only">(сейчас)</span></a>
@@ -87,7 +104,7 @@
         			<a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Язык</a>
         			<div class="dropdown-menu" aria-labelledby="dropdown01">
           				<a class="dropdown-item active" href="javascript:void(0)">Русский</a>
-          				<?= '<a class="dropdown-item" href="'.$this->configs['Domain']['domain_name'].'/index.php?r='.$aspects['view'].'&l=default">English</a>' ?>
+          				<?= '<a class="dropdown-item" href="'.$this->configs['Domain']['domain_name'].'/index.php?r='.$GLOBALS['action'].'&l=default">English</a>' ?>
           				
         			</div>
       			</li>

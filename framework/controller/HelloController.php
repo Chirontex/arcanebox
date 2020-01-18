@@ -18,9 +18,21 @@ class HelloController extends ControllerAbstract
     public function sign_in()
     {
 
-        if (isset($_SESSION['login']) && isset($_SESSION['password']) && isset($_SESSION['remember'])) $this->auth($_SESSION['login'], $_SESSION['password'], $_SESSION['remember']);
-        elseif (isset($_SESSION['login']) && isset($_SESSION['password'])) $this->auth($_SESSION['login'], $_SESSION['password']);
-        else $this->render(['view' => 'sign_in']);
+        if (isset($_COOKIE['session'])) session_id($_COOKIE['session']);
+
+        session_start();
+
+        $model = new Hello;
+
+        $check = $model->checkAuth($_SESSION['login'], $_SESSION['password']);
+
+        $model = null;
+
+        if ($check) {
+
+            $this->render(['view' => 'cabinet']);
+
+        } else $this->render(['view' => 'sign_in']);
 
     }
 
@@ -36,6 +48,8 @@ class HelloController extends ControllerAbstract
     public function auth($login = null, $password = null, $remember = null)
     {
 
+        session_start();
+
         $model = new Hello;
 
         if ($login == null) $login = $_POST['login'];
@@ -44,10 +58,31 @@ class HelloController extends ControllerAbstract
 
         $check = $model->checkAuth($login, $password, $remember);
 
-        $model = null;
+        if ($check) {
 
-        if ($check) $this->render(['view' => 'cabinet']);
-        else $this->render(['view' => 'sign_in', 'auth' => 'fail']);
+            $model = null;
+
+            $this->render(['view' => 'cabinet']);
+
+        } elseif (isset($_SESSION['login']) && isset($_SESSION['password'])) {
+
+            $check = $model->checkAuth($_SESSION['login'], $_SESSION['password']);
+
+            $model = null;
+
+            if ($check) {
+
+                $this->render(['view' => 'cabinet']);
+
+            } else $this->render(['view' => 'sign_in', 'auth' => 'fail']);
+
+        } else {
+
+            $model = null;
+
+            $this->render(['view' => 'sign_in', 'auth' => 'fail']);
+
+        }
 
     }
 
@@ -57,6 +92,9 @@ class HelloController extends ControllerAbstract
         $model = new Hello;
         $model->abortAuth();
         $model = null;
+
+        setcookie('logged', false, 0);
+        $_COOKIE['logged'] = false;
 
         $this->sign_in();
 

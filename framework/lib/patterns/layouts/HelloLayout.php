@@ -9,7 +9,7 @@
 
 	<?php
 
-		if ($aspects['view'] === 'sign_in') {
+		if ($aspects['view'] === 'sign_in' || $aspects['view'] === 'cabinet') {
 
 			echo '<link rel="stylesheet" type="text/css" href="'.$this->configs['Domain']['framework_folder'].'/lib/patterns/layouts/css/Hello/sign_in.css">';
 
@@ -39,9 +39,7 @@
 							<a class="nav-link" href="'.$this->configs['Domain']['domain_name'].'">Home<span class="sr-only">(current)</span></a>
 						</li>';
 
-				}
-
-				else {
+				} else {
 
 					echo '<li class="nav-item">
 							<a class="nav-link" href="'.$this->configs['Domain']['domain_name'].'">Home</a>
@@ -49,19 +47,37 @@
 
 				}
 
-				if ($aspects['view'] === 'sign_in') {
+				if ($_COOKIE['logged']) {
 
-					echo '<li class="nav-item active">
+					if ($aspects['view'] === 'cabinet') {
+
+						echo '<li class="nav-item active">
+							<a class="nav-link" href="'.$this->configs['Domain']['domain_name'].'/index.php?r=sign_in">Cabinet<span class="sr-only">(current)</span></a>
+						</li>';
+
+					} else {
+
+						echo '<li class="nav-item">
+							<a class="nav-link" href="'.$this->configs['Domain']['domain_name'].'/index.php?r=sign_in">Cabinet</a>
+						</li>';
+
+					}
+
+				} else {
+
+					if ($aspects['view'] === 'sign_in') {
+
+						echo '<li class="nav-item active">
 							<a class="nav-link" href="'.$this->configs['Domain']['domain_name'].'/index.php?r=sign_in">Sign in<span class="sr-only">(current)</span></a>
 						</li>';
 
-				}
+					} else {
 
-				else {
-
-					echo '<li class="nav-item">
+						echo '<li class="nav-item">
 							<a class="nav-link" href="'.$this->configs['Domain']['domain_name'].'/index.php?r=sign_in">Sign in</a>
 						</li>';
+
+					}
 
 				}
 
@@ -71,9 +87,7 @@
 							<a class="nav-link" href="'.$this->configs['Domain']['domain_name'].'/index.php?r=documentation">Documentation<span class="sr-only">(current)</span></a>
 						</li>';
 
-				}
-
-				else {
+				} else {
 
 					echo '<li class="nav-item">
 							<a class="nav-link" href="'.$this->configs['Domain']['domain_name'].'/index.php?r=documentation">Documentation</a>
@@ -86,7 +100,7 @@
 				<li class="nav-item dropdown">
         			<a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Language</a>
         			<div class="dropdown-menu" aria-labelledby="dropdown01">
-        				<?= '<a class="dropdown-item" href="'.$this->configs['Domain']['domain_name'].'/index.php?r='.$aspects['view'].'&l=Ru">Русский</a>' ?>
+        				<?= '<a class="dropdown-item" href="'.$this->configs['Domain']['domain_name'].'/index.php?r='.$GLOBALS['action'].'&l=Ru">Русский</a>' ?>
 
           				<a class="dropdown-item active" href="javascript:void(0)">English</a>
         			</div>
