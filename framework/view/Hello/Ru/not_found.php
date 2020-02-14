@@ -1,8 +1,4 @@
-<?php
-
-$title = 'Страница не найдена — Arcanebox';
-
-?>
+<?php $title = 'Страница не найдена — Arcanebox'; ?>
 
 <main role="main" class="container">
 	<div class="container-custom-center">

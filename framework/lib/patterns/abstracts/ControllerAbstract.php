@@ -61,6 +61,19 @@ abstract class ControllerAbstract implements ControllerInterface
 
     }
 
+    private function get_title($view)
+    {
+
+        $view_data = file_get_contents($view);
+        $explode = explode('?>', $view_data, 2);
+        $code = substr($explode['0'], 5);
+        
+        eval($code);
+
+        return $title;
+
+    }
+
     public function index()
     {
 

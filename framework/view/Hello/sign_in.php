@@ -1,8 +1,4 @@
-<?php
-
-$title = 'Sign in — Arcanebox';
-
-?>
+<?php $title = 'Sign in — Arcanebox'; ?>
 
 <main role="main" class="container">
 	<div class="container-custom-center">

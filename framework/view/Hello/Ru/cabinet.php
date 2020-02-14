@@ -1,8 +1,4 @@
-<?php
-
-$title = 'Тестовая страница кабинета - Arcanebox';
-
-?>
+<?php $title = 'Тестовая страница кабинета - Arcanebox'; ?>
 
 <main role="main" class="container">
 	<div class="container-custom-center">

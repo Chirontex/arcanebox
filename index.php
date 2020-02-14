@@ -1,5 +1,7 @@
 <?php
 
+$time_start = microtime(true);
+
 require_once 'framework/autoloader.php';
 
 use Arcanebox\controller;

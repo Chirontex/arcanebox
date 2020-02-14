@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<title><?= $title ?></title>
+	<title><?= $this->get_title($view) ?></title>
 	<?= '<link rel="stylesheet" type="text/css" href="'.$this->configs['Domain']['framework_folder'].'/lib/external/css/bootstrap/bootstrap.min.css">' ?>
 	<?= '<link rel="stylesheet" type="text/css" href="'.$this->configs['Domain']['framework_folder'].'/lib/patterns/layouts/css/Hello/style.css">' ?>
 
@@ -39,9 +39,7 @@
 							<a class="nav-link" href="'.$this->configs['Domain']['domain_name'].'">Главная<span class="sr-only">(сейчас)</span></a>
 						</li>';
 
-				}
-
-				else {
+				} else {
 
 					echo '<li class="nav-item">
 							<a class="nav-link" href="'.$this->configs['Domain']['domain_name'].'">Главная</a>
@@ -116,21 +114,26 @@
 		</div>
 	</nav>
 
-	<?php require_once $view ?>
+	<?php require_once $view; ?>
+
+	<?php 
+
+	global $time_start;
+
+	$time_end = microtime(true);
+
+	$runtime = $time_end - $time_start;
+
+	$runtime = number_format($runtime, 2);
+
+	?>
 
 	<footer class="footer mt-auto py-3">
   		<nav class="navbar fixed-bottom navbar-expand-sm navbar-dark bg-dark">
   			<div class="container-fluid">
-    			<p class="text-muted">&copy; Дмитрий Шумилин, 2019</p>
+    			<p class="text-muted">&copy; Дмитрий Шумилин, 2020 | Время загрузки страницы: <?= $runtime ?> сек.</p>
  			</div>
   		</nav>
 	</footer>
-
-	<?= '<script type="text/javascript">' ?>
-
-	<?= 'document.title = "'.$title.'"' ?>
-
-	<?= '</script>' ?>
-
 </body>
 </html>

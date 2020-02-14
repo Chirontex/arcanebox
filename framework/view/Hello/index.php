@@ -1,9 +1,4 @@
-<?php
-
-$title = 'Hello! — Arcanebox';
-
-?>
-
+<?php $title = 'Hello! — Arcanebox'; ?>
 <main role="main" class="container">
 	<div class="container-custom-center">
 		<h1>Hello!</h1>
