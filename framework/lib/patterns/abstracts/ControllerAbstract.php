@@ -67,8 +67,20 @@ abstract class ControllerAbstract implements ControllerInterface
         $view_data = file_get_contents($view);
         $explode = explode('?>', $view_data, 2);
         $code = substr($explode['0'], 5);
-        
-        eval($code);
+
+        $code = trim($code);
+
+        if (substr($code, 0, 6) == '$title') {
+
+            $explode_code = explode('=', $code);
+
+            $title = trim($explode_code['1']);
+
+            if (substr($title, -1, 1) == ';') $title = substr($title, 0, -1);
+
+            $title = trim($title, "'");
+
+        } else $title = 'Arcanebox';
 
         return $title;
 
