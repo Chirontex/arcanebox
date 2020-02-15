@@ -21,7 +21,8 @@ abstract class ModelAbstract implements ModelInterface
             $this->database_config = $autoload->configs_loaded['Database'];
 
             $this->connection = new \mysqli($this->database_config['host'], $this->database_config['username'], $this->database_config['password'], $this->database_config['database']);
-            $this->connection->query("SET NAMES 'utf8'");
+
+            if ($this->connection) $this->connection->query("SET NAMES 'utf8'");
 
         }
 
@@ -30,76 +31,80 @@ abstract class ModelAbstract implements ModelInterface
     public function __destruct()
     {
 
-        if (isset($this->connection)) {
-
-            $this->connection->close();
-
-        }
+        if (isset($this->connection)) $this->connection->close();
 
     }
 
-    public function databaseSelect($params)
+    public function database_select($params)
     {
 
-        if ($this->table_name && $params['column']) {
+        if ($this->table_name) {
 
-            if (isset($params['tablename'])) $table_name = $params['tablename'];
-            else $table_name = $this->table_name;
+            if (isset($params['table'])) $table = $params['table'];
+            else $table = $this->table_name;
 
             $columns = "";
-            $columns_temp = [];
-            $temp_count = 0;
 
-            foreach ($params as $key => $value) {
-                
-                if (substr($key, 0, 6) == 'column') {
+            if (isset($params['columns']) && count($params['columns']) > 0) {
 
-                    if (!(substr($key, 5))) $columns .= "t.".$value;
-                    elseif (substr($columns, 0, 2) == 't.') $columns .= ", t.".$value;
-                    else {
-
-                        $temp_count += 1;
-                        $temp_name = 'column_temp_'.$temp_count;
-                        $columns_temp = [$temp_name => ", t.".$value];
-
-                    }
-
-                }
-
-            }
-
-            foreach ($columns_temp as $key => $value) {
-                
-                $columns .= $value;
-
-            }
-
-            $conditions = "";
-
-            if (is_array($params['where'])) {
-
-                foreach ($params['where'] as $key => $value) {
+                foreach ($params['columns'] as $key => $column) {
                     
-                    if ($conditions == "") $conditions = "WHERE t.".$key." = ".$value;
-                    else $conditions .= "AND t.".$key." = ".$value;
+                    if (iconv_strlen($columns) > 0) $columns .= ", db.".$column;
+                    else $columns = "db.".$column;
+
+                }
+
+            } else $columns = "*";
+
+            $where_conditions = "";
+
+            if (isset($params['where']) && count($params['where']) > 0) {
+
+                foreach ($params['where'] as $column => $condition) {
+                    
+                    if (iconv_strlen($where_conditions) > 0) $where_conditions .= " AND db.".$column." = '".$condition."'";
+                    else $where_conditions = " WHERE db.".$column." = '".$condition."'";
 
                 }
 
             }
 
-            $raw_result = $this->connection->query("SELECT ".$columns." FROM ".$this->database_config['database'].$table_name." AS t ".$conditions);
+            $order_by = "";
+
+            if (isset($params['order_by']) && count($params['order_by']) > 0) {
+
+                foreach ($params['order_by'] as $column => $condition) {
+                    
+                    if (iconv_strlen($order_by) > 0) $order_by .= ", db.".$column." ".$condition;
+                    else $order_by = " ORDER BY db.".$column." ".$condition;
+
+                }
+
+            }
+
+            $limit = "";
+
+            if (isset($params['limit'])) {
+
+                $limit_int = (int)$params['limit'];
+
+                if ($limit_int > 0) $limit = " LIMIT ".$limit_int;
+
+            }
+
+            $raw_result = $this->connection->query("SELECT ".$columns." FROM ".$this->database_config['database'].$table." AS db".$where_conditions.$order_by.$limit);
 
             $result = [];
 
-            $row_count = 0;
+            if ($raw_result) {
 
-            while ($result_row = $raw_result->fetch_assoc()) {
-                
-                $result = [$row_count => $result_row];
+                while ($raw_result_row = $raw_result->fetch_assoc()) {
 
-                $row_count += 1;
+                    $result[] = $raw_result_row;
 
-            }
+                }
+
+            } else $result = false;
 
             return $result;
 
