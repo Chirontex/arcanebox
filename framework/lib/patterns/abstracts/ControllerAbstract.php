@@ -12,9 +12,11 @@ abstract class ControllerAbstract implements ControllerInterface
     public function __construct($action, $language)
     {
 
-        $this->configs = $GLOBALS['autoload']->configs_loaded;
-        $this->layouts = $GLOBALS['autoload']->layouts_catalog;
-        $this->views = $GLOBALS['autoload']->views_catalog;
+    	global $autoload;
+
+        $this->configs = $autoload->configs_loaded;
+        $this->layouts = $autoload->layouts_catalog;
+        $this->views = $autoload->views_catalog;
         $this->layout_actual = $this->chooseLayout();
         $this->language_set = $language;
 
@@ -78,7 +80,7 @@ abstract class ControllerAbstract implements ControllerInterface
 
             if (substr($title, -1, 1) == ';') $title = substr($title, 0, -1);
 
-            $title = trim($title, "'");
+            $title = trim($title, "'\"");
 
         } else $title = 'Arcanebox';
 
