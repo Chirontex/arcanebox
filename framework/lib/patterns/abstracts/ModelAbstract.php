@@ -35,7 +35,7 @@ abstract class ModelAbstract implements ModelInterface
 
     }
 
-    public function database_select($params)
+    public function sql_select($params)
     {
 
         if ($this->table_name) {
@@ -91,7 +91,64 @@ abstract class ModelAbstract implements ModelInterface
                 if ($limit_int > 0) $limit = " LIMIT ".$limit_int;
 
             }
+/*
+            $joins = "";
 
+            if (isset($params['joins'])) {
+
+                for ($i = 0; $i < count($params['joins'][$i]); $i++) {
+
+                    $m = $i + 2;
+
+                    if (isset($params['joins'][$i]['columns']) && count($params['joins'][$i]['columns']) > 0) {
+
+                        foreach ($params['joins'][$i]['columns'] as $key => $column) {
+                            
+                            if ($columns == "*") $columns = "db".$m.".".$column;
+                            else $columns .= ", db".$m.".".$column;
+
+                        }
+
+                    }
+
+                    if (isset($params['joins'][$i]['where']) && count($params['joins'][$i]['where']) > 0) {
+
+                        foreach ($params['joins'][$i]['where'] as $column => $condition) {
+                            
+                            if (iconv_strlen($where_conditions) > 0) $where_conditions .= " AND db".$m.".".$column." = '".$condition."'";
+                            else $where_conditions = " WHERE db".$m.".".$column." = '".$condition."'";
+
+                        }
+
+                    }
+
+                    if (isset($params['joins'][$i]['order_by']) && count($params['joins'][$i]['order_by']) > 0) {
+
+                        foreach ($$params['joins'][$i]['order_by'] as $column => $condition) {
+                            
+                            if (iconv_strlen($order_by) > 0) $order_by .= ", db".$m.".".$column." ".$condition;
+                            else $order_by = " ORDER BY db".$m.".".$column." ".$condition;
+
+                        }
+
+                    }
+
+                    if (!isset($params['joins'][$i]['type'])) $params['joins'][$i]['type'] = 'inner';
+
+                    switch ($params['joins'][$i]['type']) {
+                        case 'left':
+                            //дописать
+                            break;
+                        
+                        default:
+                            # code...
+                            break;
+                    }
+
+                }
+
+            }
+*/
             $raw_result = $this->connection->query("SELECT ".$columns." FROM ".$this->database_config['database'].$table." AS db".$where_conditions.$order_by.$limit);
 
             $result = [];
