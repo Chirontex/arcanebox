@@ -4,9 +4,10 @@ $time_start = microtime(true);
 
 require_once 'framework/autoloader.php';
 
-use Arcanebox\controller;
+use Arcanebox\Autoloader;
+use Arcanebox\controllers;
 
-$autoload = new Arcanebox\Autoloader;
+$autoload = new Autoloader;
 
 $response_code = http_response_code();
 
@@ -44,4 +45,4 @@ if (!(isset($_GET['l'])) && isset($_COOKIE["language"])) $language = $_COOKIE["l
 
 if (!(isset($_GET['l'])) && !(isset($_COOKIE["language"]))) $language = 'default';
 
-$controller_calling = new controller\HelloController($action, $language);
+$controller_calling = new controllers\HelloController($action, $language);

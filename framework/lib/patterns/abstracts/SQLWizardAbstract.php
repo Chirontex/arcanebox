@@ -7,172 +7,199 @@ use Arcanebox\lib\patterns\interfaces\SQLWizardInterface;
 abstract class SQLWizardAbstract implements SQLWizardInterface
 {
 
-    protected $table_name, $connection, $database_config;
+    private $connection, $host, $username, $password, $database;
 
-    public function __construct($tableName = false)
+    public function __construct()
     {
 
-        $autoload = $GLOBALS['autoload'];
+        global $autoload;
 
-        $this->table_name = $tableName;
+        $this->host = $autoload['Database']['host'];
+        $this->username = $autoload['Database']['username'];
+        $this->password = $autoload['Database']['password'];
+        $this->database = $autoload['Database']['database'];
 
-        if ($this->table_name) {
+        $this->connection = new \mysqli($this->host, $this->username, $this->password, $this->database);
 
-            $this->database_config = $autoload->configs_loaded['Database'];
-
-            $this->connection = new \mysqli($this->database_config['host'], $this->database_config['username'], $this->database_config['password'], $this->database_config['database']);
-
-            if ($this->connection) $this->connection->query("SET NAMES 'utf8'");
-
-        }
+        if ($this->connection) $this->connection->query("SET NAMES 'utf8'");
 
     }
 
     public function __destruct()
     {
 
-        if (isset($this->connection)) $this->connection->close();
-
-    }
-
-    private function joiner()
-    {
-
-
+        if ($this->connection) $this->connection->close();
 
     }
 
     public function sql_select(array $params)
     {
 
-        if ($this->table_name && is_array($params)) {
-
-            if (isset($params['table'])) $table = $params['table'];
-            else $table = $this->table_name;
+        if ($this->connection && isset($params['prime']['name'])) {
 
             $columns = "";
-
-            if (isset($params['columns']) && count($params['columns']) > 0) {
-
-                foreach ($params['columns'] as $key => $column) {
-                    
-                    if (iconv_strlen($columns) > 0) $columns .= ", db.".$column;
-                    else $columns = "db.".$column;
-
-                }
-
-            } else $columns = "*";
-
-            $where_conditions = "";
-
-            if (isset($params['where']) && count($params['where']) > 0) {
-
-                foreach ($params['where'] as $column => $condition) {
-                    
-                    if (iconv_strlen($where_conditions) > 0) $where_conditions .= " AND db.".$column." = '".$condition."'";
-                    else $where_conditions = " WHERE db.".$column." = '".$condition."'";
-
-                }
-
-            }
-
+            $joins = "";
+            $where = "";
             $order_by = "";
 
-            if (isset($params['order_by']) && count($params['order_by']) > 0) {
+            $t = 1;
 
-                foreach ($params['order_by'] as $column => $condition) {
-                    
-                    if (iconv_strlen($order_by) > 0) $order_by .= ", db.".$column." ".$condition;
-                    else $order_by = " ORDER BY db.".$column." ".$condition;
+            foreach ($params as $status => $terms) {
+
+                $join_type = "";
+                $on = "";
+                $table_columns = "";
+                $table_where = "";
+                $table_order_by = "";
+
+                if ($status = 'prime') $t = "";
+                elseif ($status == 'left' || $status == 'right' || $status == 'full' || $status == 'cross') $join_type = $status;
+                else {
+
+                    if (is_array($terms['on'])) $join_type = 'inner';
+                    else $join_type = 'cross';
 
                 }
 
-            }
+                if (iconv_strlen($join_type) > 0) {
 
-            $limit = "";
-
-            if (isset($params['limit'])) {
-
-                $limit_int = (int)$params['limit'];
-
-                if ($limit_int > 0) $limit = " LIMIT ".$limit_int;
-
-            }
-/*
-            $joins = "";
-
-            if (isset($params['joins'])) {
-
-                for ($i = 0; $i < count($params['joins'][$i]); $i++) {
-
-                    $t = $i + 2;
-
-                    if (isset($params['joins'][$i]['columns']) && count($params['joins'][$i]['columns']) > 0) {
-
-                        foreach ($params['joins'][$i]['columns'] as $key => $column) {
-                            
-                            if ($columns == "*") $columns = "db".$t.".".$column;
-                            else $columns .= ", db".$t.".".$column;
-
-                        }
-
-                    }
-
-                    if (isset($params['joins'][$i]['where']) && count($params['joins'][$i]['where']) > 0) {
-
-                        foreach ($params['joins'][$i]['where'] as $column => $condition) {
-                            
-                            if (iconv_strlen($where_conditions) > 0) $where_conditions .= " AND db".$t.".".$column." = '".$condition."'";
-                            else $where_conditions = " WHERE db".$t.".".$column." = '".$condition."'";
-
-                        }
-
-                    }
-
-                    if (isset($params['joins'][$i]['order_by']) && count($params['joins'][$i]['order_by']) > 0) {
-
-                        foreach ($$params['joins'][$i]['order_by'] as $column => $condition) {
-                            
-                            if (iconv_strlen($order_by) > 0) $order_by .= ", db".$t.".".$column." ".$condition;
-                            else $order_by = " ORDER BY db".$t.".".$column." ".$condition;
-
-                        }
-
-                    }
-
-                    if (!isset($params['joins'][$i]['type'])) $params['joins'][$i]['type'] = 'inner';
-
-                    switch ($params['joins'][$i]['type']) {
+                    switch ($join_type) {
                         case 'left':
-                            //дописать
+                            $join_type = " LEFT ";
+                            if (!is_array($terms['on'])) break 2;
                             break;
+
+                        case 'right':
+                            $join_type = " RIGHT ";
+                            if (!is_array($terms['on'])) break 2;
+                            break;
+
+                        case 'inner':
+                            $join_type = " INNER ";
+                            if (!is_array($terms['on'])) break 2;
+                            break;
+
+                        case 'full':
+                            $join_type = " FULL ";
+                            break;
+
+                        case 'cross':
+                            $join_type = " CROSS ";
+                            break;
+                    }
+
+                    $t += 1;
+
+                }
+
+                if (is_array($terms['on'])) {
+
+                    foreach ($terms['on'] as $number => $column) {
                         
-                        default:
-                            # code...
-                            break;
+                        if ($number == 1) $n = "";
+                        else $n = $number;
+
+                        if (iconv_strlen($on) > 0) $on .= " db".$n.".".$column.")";
+                        else $on = " ON (db".$n.".".$column." =";
+
+                    }
+
+                }
+                
+                if (isset($terms['columns'])) {
+
+                    if (is_array($terms['columns'])) {
+
+                        for ($i = 0; $i < count($terms['columns']); $i++) {
+
+                            if (iconv_strlen($table_columns) > 0) $table_columns .= ", db".$t.".".$terms['columns'][$i];
+                            else $table_columns = "db".$t.".".$terms['columns'][$i];
+
+                        }
+
+                    } else {
+
+                        $column_string = (string)$terms['columns'];
+
+                        $table_columns = "db".$t.".".$column_string;
+
                     }
 
                 }
 
+                if (is_array($terms['where'])) {
+
+                    foreach ($terms['where'] as $column => $conditions) {
+
+                        if (isset($conditions['union'])) {
+
+                            switch ($conditions['union']) {
+                                case 'and':
+                                    $union = "AND";
+                                    break;
+                                
+                                case 'or':
+                                    $union = "OR";
+                                    break;
+
+                                default:
+                                    $union = "AND";
+                                    break;
+                            }
+
+                        } else $union = "AND";
+                        
+                        if (iconv_strlen($table_where) > 0 || iconv_strlen($where) > 0) $table_where .= " ".$union." db".$t.".".$column." = '".$conditions['value']."'";
+                        else $table_where = " db".$t.".".$column." = '".$conditions['value']."'";
+
+                    }
+
+                }
+
+                if (is_array($terms['order_by'])) {
+
+                    foreach ($terms['order_by'] as $column => $condition) {
+                        
+                        if (iconv_strlen($table_order_by) > 0 || iconv_strlen($order_by) > 0) $table_order_by .= ", db".$t.".".$column." ".$condition;
+                        else $table_order_by = "ORDER BY db".$t.".".$column." ".$condition;
+
+                    }
+
+                }
+
+                if (iconv_strlen($join_type) > 0) $joins .= " ".$join_type." JOIN ".$on;
+
+                $columns .= $table_columns;
+
+                $where .= $table_where;
+
+                $order_by .= $table_order_by;
+
             }
-*/
-            $raw_result = $this->connection->query("SELECT ".$columns." FROM ".$this->database_config['database'].$table." AS db".$where_conditions.$order_by.$limit);
+
+            if ($columns == "") $columns = "*";
+
+            if (isset($params['prime']['limit'])) {
+
+                $limit_int = (int)$params['prime']['limit'];
+
+                $limit = " LIMIT ".$limit_int;
+
+            } else $limit = "";
+
+            $result_raw = $this->connection->query("SELECT ".$columns." FROM db.".$params['prime']['name'].$joins.$where.$order_by.$limit);
 
             $result = [];
 
-            if ($raw_result) {
+            while ($result_row = $result_raw->fetch_assoc()) {
 
-                while ($raw_result_row = $raw_result->fetch_assoc()) {
+                $result[] = $result_row;
 
-                    $result[] = $raw_result_row;
-
-                }
-
-            } else $result = false;
-
-            return $result;
+            }
 
         } else return false;
+
+        return $result;
 
     }
 

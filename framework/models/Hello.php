@@ -1,6 +1,6 @@
 <?php
 
-namespace Arcanebox\model;
+namespace Arcanebox\models;
 
 use Arcanebox\lib\patterns\abstracts\ModelAbstract;
 

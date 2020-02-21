@@ -1,9 +1,9 @@
 <?php
 
-namespace Arcanebox\controller;
+namespace Arcanebox\controllers;
 
 use Arcanebox\lib\patterns\abstracts\ControllerAbstract;
-use Arcanebox\model\Hello;
+use Arcanebox\models\Hello;
 
 class HelloController extends ControllerAbstract
 {

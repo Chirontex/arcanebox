@@ -5,13 +5,13 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<title><?= $this->get_title($view) ?></title>
 	<?= '<link rel="stylesheet" type="text/css" href="'.$this->configs['Domain']['framework_folder'].'/lib/external/css/bootstrap/bootstrap.min.css">' ?>
-	<?= '<link rel="stylesheet" type="text/css" href="'.$this->configs['Domain']['framework_folder'].'/lib/patterns/layouts/css/Hello/style.css">' ?>
+	<?= '<link rel="stylesheet" type="text/css" href="'.$this->configs['Domain']['framework_folder'].'/layouts/css/Hello/style.css">' ?>
 
 	<?php
 
 		if ($aspects['view'] === 'sign_in' || $aspects['view'] === 'cabinet') {
 
-			echo '<link rel="stylesheet" type="text/css" href="'.$this->configs['Domain']['framework_folder'].'/lib/patterns/layouts/css/Hello/sign_in.css">';
+			echo '<link rel="stylesheet" type="text/css" href="'.$this->configs['Domain']['framework_folder'].'/layouts/css/Hello/sign_in.css">';
 
 		}
 

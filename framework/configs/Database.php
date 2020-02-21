@@ -1,6 +1,6 @@
 <?php
 
-namespace Arcanebox\config;
+namespace Arcanebox\configs;
 
 use Arcanebox\lib\patterns\interfaces\ConfigInterface;
 

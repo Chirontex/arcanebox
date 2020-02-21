@@ -22,18 +22,18 @@ class Autoloader
     {
 
         $this->configs_loaded = array();
-        $configs_load = opendir(__DIR__."/config");
+        $configs_load = opendir(__DIR__."/configs");
 
         while ($config = readdir($configs_load)) {
 
             if (substr($config, -4) === '.php') {
 
-                include_once __DIR__.'/config/'.$config;
+                include_once __DIR__.'/configs/'.$config;
 
-                $config_classname = '\Arcanebox\config\\'.substr($config, 0, -4);
+                $config_classname = '\Arcanebox\configs\\'.substr($config, 0, -4);
                 $config_entrance = new $config_classname;
                 $config_initialization = $config_entrance->initialization();
-                $this->configs_loaded[substr($config_classname, 18)] = $config_initialization;
+                $this->configs_loaded[substr($config_classname, 19)] = $config_initialization;
 
             }
 
@@ -82,13 +82,13 @@ class Autoloader
     public function loadControllers()
     {
 
-        $controllers_load = opendir(__DIR__."/controller");
+        $controllers_load = opendir(__DIR__."/controllers");
 
         while ($controller = readdir($controllers_load)) {
 
             if (substr($controller, -14) === 'Controller.php') {
 
-                include_once __DIR__.'/controller/'.$controller;
+                include_once __DIR__.'/controllers/'.$controller;
 
             }
 
@@ -103,17 +103,17 @@ class Autoloader
 
         $this->models_loaded = array();
 
-        $models_load = opendir(__DIR__."/model");
+        $models_load = opendir(__DIR__."/models");
 
         while ($model = readdir($models_load)) {
 
             if (substr($model, -4) === '.php') {
 
-                include_once __DIR__.'/model/'.$model;
+                include_once __DIR__.'/models/'.$model;
 
                 $model_name = substr($model, 0, -4);
 
-                $this->models_loaded[$model_name] = '/view/'.$model_name.'/';
+                $this->models_loaded[$model_name] = '/views/'.$model_name.'/';
 
             }
 
@@ -167,13 +167,13 @@ class Autoloader
 
         $this->layouts_catalog = array();
 
-        $layouts_scan = opendir(__DIR__."/lib/patterns/layouts");
+        $layouts_scan = opendir(__DIR__."/layouts");
 
         while ($layout = readdir($layouts_scan)) {
 
             if (substr($layout, -10) === 'Layout.php') {
 
-                $this->layouts_catalog[substr($layout, 0, -10)] = '/lib/patterns/layouts/'.$layout;
+                $this->layouts_catalog[substr($layout, 0, -10)] = '/layouts/'.$layout;
 
             }
 
